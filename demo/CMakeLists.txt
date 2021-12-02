@@ -9,12 +9,12 @@ include_directories(
 
 #查找必要的依赖包
 find_package(OpenCV REQUIRED)
-set(InferenceEngine_DIR "/opt/intel/openvino/deployment_tools/inference_engine/share")
+set(InferenceEngine_DIR "/opt/intel/openvino_2021/deployment_tools/inference_engine/share")
 find_package(InferenceEngine)
-set(ngraph_DIR "/opt/intel/openvino/deployment_tools/ngraph")
+set(ngraph_DIR "/opt/intel/openvino_2021/deployment_tools/ngraph")
 find_package(ngraph REQUIRED)
-set(ngraph_LIBRARIES "/opt/intel/openvino/deployment_tools/ngraph/lib/libngraph.so")
-set(ngraph_INCLUDE_DIRS "/opt/intel/openvino/deployment_tools/ngraph/include/")
+set(ngraph_LIBRARIES "/opt/intel/openvino_2021/deployment_tools/ngraph/lib/libngraph.so")
+set(ngraph_INCLUDE_DIRS "/opt/intel/openvino_2021/deployment_tools/ngraph/include/")
 
 
 # 编译detector.so
