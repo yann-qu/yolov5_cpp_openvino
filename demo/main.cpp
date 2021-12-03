@@ -1,11 +1,11 @@
-#include "detector.h"
+#include "Detector/Detector.h"
 
 int main(int argc, char const* argv[])
 {
     Detector* detector = new Detector;
     string    xml_path = "../res/yolov5s.xml";
     // string xml_path = "../res/yolov5m.xml";
-    detector->init(xml_path, 0.1, 0.5);
+    detector->init(xml_path, 0.3, 0.5);
 
     VideoCapture capture;
     capture.open(0);
@@ -18,6 +18,7 @@ int main(int argc, char const* argv[])
         vector<Detector::Object> detected_objects;
         detector->process_frame(src, detected_objects);
         for (int i = 0; i < detected_objects.size(); ++i) {
+            cout << detected_objects[i].classId << endl; // 使用coco数据集标签
             int  xmin   = detected_objects[i].rect.x;
             int  ymin   = detected_objects[i].rect.y;
             int  width  = detected_objects[i].rect.width;

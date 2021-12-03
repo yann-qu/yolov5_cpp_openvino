@@ -14,9 +14,9 @@ class Detector
 {
   public:
     typedef struct {
-        float       prob;
-        std::string name;
-        cv::Rect    rect;
+        float    prob;
+        int      classId;
+        cv::Rect rect;
     } Object;
     Detector();
     ~Detector();
@@ -30,7 +30,7 @@ class Detector
   private:
     double      sigmoid(double x);
     vector<int> get_anchors(int net_grid);
-    bool        parse_yolov5(const Blob::Ptr& blob, int net_grid, float cof_threshold, vector<Rect>& o_rect, vector<float>& o_rect_cof);
+    bool        parse_yolov5(const Blob::Ptr& blob, int net_grid, float cof_threshold, vector<Rect>& o_rect, vector<float>& o_rect_cof, vector<int>& classIds);
     Rect        detet2origin(const Rect& dete_rect, float rate_to, int top, int left);
     //存储初始化获得的可执行网络
     ExecutableNetwork _network;

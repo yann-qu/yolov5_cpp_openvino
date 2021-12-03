@@ -1,11 +1,11 @@
-#include "detector.h"
+#include "Detector.h"
 
 Detector::Detector() {}
 
 Detector::~Detector() {}
 
 //注意此处的阈值是框和物体prob乘积的阈值
-bool Detector::parse_yolov5(const Blob::Ptr& blob, int net_grid, float cof_threshold, vector<Rect>& o_rect, vector<float>& o_rect_cof)
+bool Detector::parse_yolov5(const Blob::Ptr& blob, int net_grid, float cof_threshold, vector<Rect>& o_rect, vector<float>& o_rect_cof, vector<int>& classIds)
 {
     vector<int>              anchors     = get_anchors(net_grid);
     LockedMemory<const void> blobMapped  = as<MemoryBlob>(blob)->rmap();
@@ -52,6 +52,7 @@ bool Detector::parse_yolov5(const Blob::Ptr& blob, int net_grid, float cof_thres
                 Rect   rect = Rect(round(r_x), round(r_y), round(w), round(h));
                 o_rect.push_back(rect);
                 o_rect_cof.push_back(cof);
+                classIds.push_back(idx - 5);
             }
     if (o_rect.size() == 0)
         return false;
@@ -120,12 +121,13 @@ bool Detector::process_frame(Mat& inframe, vector<Object>& detected_objects)
     //获取各层结果
     vector<Rect>  origin_rect;
     vector<float> origin_rect_cof;
+    vector<int> classIds;
     int           s[3] = { 80, 40, 20 };
     int           i    = 0;
     for (auto& output : _outputinfo) {
         auto      output_name = output.first;
         Blob::Ptr blob        = infer_request->GetBlob(output_name);
-        parse_yolov5(blob, s[i], _cof_threshold, origin_rect, origin_rect_cof);
+        parse_yolov5(blob, s[i], _cof_threshold, origin_rect, origin_rect_cof, classIds);
         ++i;
     }
     //后处理获得最终检测结果
@@ -134,7 +136,7 @@ bool Detector::process_frame(Mat& inframe, vector<Object>& detected_objects)
     //根据final_id获取最终结果
     for (int i = 0; i < final_id.size(); ++i) {
         Rect resize_rect = origin_rect[final_id[i]];
-        detected_objects.push_back(Object{ origin_rect_cof[final_id[i]], "", resize_rect });
+        detected_objects.push_back(Object{ origin_rect_cof[final_id[i]], classIds[final_id[i]], resize_rect });
     }
     return true;
 }
